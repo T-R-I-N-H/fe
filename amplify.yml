@@ -3,11 +3,13 @@ frontend:
   phases:
     preBuild:
       commands:
+        - echo "VITE_GOOGLE_CLIENT_ID=$VITE_GOOGLE_CLIENT_ID" >> .env
         - corepack enable
         - corepack prepare pnpm@latest --activate
         - pnpm install
     build:
       commands:
+        - echo "Building with GOOGLE_CLIENT_ID = $VITE_GOOGLE_CLIENT_ID"
         - pnpm run build
   artifacts:
     baseDirectory: dist
