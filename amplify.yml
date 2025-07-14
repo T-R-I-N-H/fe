@@ -5,6 +5,8 @@ frontend:
       commands:
         - echo "VITE_GOOGLE_CLIENT_ID=$VITE_GOOGLE_CLIENT_ID" >> .env
         - echo "VITE_API_URL=$VITE_API_URL" >> .env
+        - corepack enable
+        - corepack prepare pnpm@latest --activate
         - pnpm install
     build:
       commands:
