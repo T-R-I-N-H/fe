@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Quicksand:wght@300..700&display=swap');
+@plugin "@tailwindcss/typography";
 
 * {
   font-family: 'Inter', sans-serif;
@@ -8,6 +9,35 @@
 
 button {
   cursor: pointer;
+}
+
+/* Custom animations for chat popup */
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-notification {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.animate-in {
+  animation: slideInFromBottom 0.3s ease-out;
+}
+
+.animate-pulse-notification {
+  animation: pulse-notification 2s infinite;
 }
 
 @custom-variant dark (&:is(.dark *));

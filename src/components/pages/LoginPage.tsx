@@ -1,27 +1,56 @@
+import { useEffect } from 'react';
+
 import { useNavigateWithLoading } from '@/hooks/useNavigateWithLoading';
+import AuthServices from '@/services/AuthServices';
 
 import { type CredentialResponse, GoogleLogin } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
     const navigateWithLoading = useNavigateWithLoading();
+    const navigate = useNavigate();
+    const location = useLocation();
 
-    const handleSuccess = (credentialResponse: CredentialResponse) => {
-        const token = credentialResponse.credential;
-        if (!token) {
-            console.error('No token received');
-            return;
+    // Check if user is already authenticated
+    useEffect(() => {
+        const googleToken = localStorage.getItem('googleToken');
+        const accessToken = localStorage.getItem('accessToken');
+
+        if (googleToken && accessToken) {
+            // User is already logged in, redirect to intended page or diagrams
+            const from = (location.state as any)?.from?.pathname || '/diagrams';
+            navigate(from, { replace: true });
         }
-        const user = jwtDecode(token);
-        localStorage.setItem('googleToken', token);
-        console.log('User data:', user);
+    }, [navigate, location]);
 
-        // Navigate to home page after successful login
-        navigateWithLoading('/');
+    const handleSuccess = async (credentialResponse: CredentialResponse) => {
+        try {
+            const token = credentialResponse.credential;
+            if (!token) {
+                console.error('No token received');
+                return;
+            }
+
+            localStorage.setItem('googleToken', token);
+
+            // Call the backend authentication service
+            await AuthServices.login();
+
+            // Redirect to the page they were trying to access, or default to diagrams
+            const from = (location.state as any)?.from?.pathname || '/diagrams';
+            navigateWithLoading(from);
+        } catch (error) {
+            console.error('Login failed:', error);
+            // Clear any potentially invalid tokens
+            localStorage.removeItem('googleToken');
+            localStorage.removeItem('accessToken');
+            alert('Login failed. Please try again.');
+        }
     };
 
     const handleError = () => {
         console.error('Login Failed');
+        alert('Google authentication failed. Please try again.');
     };
 
     return (

@@ -1,0 +1,35 @@
+import { instance } from '@/lib/axios';
+import type { Diagram, DiagramDetails } from '@/types/diagram';
+
+const DiagramServices = {
+    async createDiagram(formData: FormData): Promise<Diagram> {
+        const { data } = await instance.post('/diagrams', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return data.data;
+    },
+    async getDiagrams(): Promise<Diagram[]> {
+        const response = await instance.get('/diagrams/mine');
+        return response.data.data;
+    },
+    async getDiagramById(diagramId: string): Promise<DiagramDetails> {
+        try {
+            const response = await instance.get(`/diagrams/${diagramId}`);
+            return response.data.data;
+        } catch (error: any) {
+            console.error('Failed to fetch diagram:', error);
+            if (error.response?.status === 404) {
+                throw new Error('Diagram not found');
+            } else if (error.response?.status === 403) {
+                throw new Error('You do not have permission to view this diagram');
+            } else if (error.response?.status === 401) {
+                throw new Error('Please log in to view this diagram');
+            }
+            throw new Error('Failed to load diagram. Please try again.');
+        }
+    },
+};
+
+export default DiagramServices;

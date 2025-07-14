@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { xml } from '../../constants';
+import { cleanBpmnXml, xml } from '../../constants';
+import { useDiagramEditorContext } from '../provider/DiagramEditorProvider';
 
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
 import 'bpmn-js/dist/assets/bpmn-js.css';
@@ -16,7 +17,9 @@ const BpmnModelerComponent = (props: Props) => {
     const { onExport } = props;
     const containerRef = useRef<HTMLDivElement | null>(null);
     const modelerRef = useRef<BpmnJS | null>(null);
-    const [diagramXml, setDiagramXml] = useState<string>(xml);
+
+    const { diagram } = useDiagramEditorContext();
+    console.log(diagram);
 
     useEffect(() => {
         if (!containerRef.current) return;
@@ -49,12 +52,12 @@ const BpmnModelerComponent = (props: Props) => {
             }
         };
 
-        openDiagram(xml);
+        openDiagram(cleanBpmnXml(diagram?.diagram_data));
 
         return () => {
             modeler.destroy();
         };
-    }, [diagramXml]);
+    }, [diagram]);
 
     const exportDiagram = async () => {
         if (!modelerRef.current) return;

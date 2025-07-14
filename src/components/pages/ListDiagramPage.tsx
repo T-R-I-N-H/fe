@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
 
+import { useAppContext } from '../provider/AppProvider';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,24 +13,32 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { SAMPLE_DIAGRAMS } from '@/constants/sample_diagram';
 import { useNavigateWithLoading } from '@/hooks/useNavigateWithLoading';
 import type { Diagram } from '@/types/diagram';
 
 import { Calendar, Download, Edit, Eye, FileText, Plus, Search, Trash2 } from 'lucide-react';
 
-// Sample data - replace with actual data from your API
-const sampleDiagrams = SAMPLE_DIAGRAMS;
-
 const ListDiagramPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [diagrams] = useState<Diagram[]>(sampleDiagrams);
+    const { diagrams } = useAppContext();
     const navigateWithLoading = useNavigateWithLoading();
+
+    // Show loading spinner while diagrams are being fetched
+    if (!diagrams) {
+        return (
+            <div className="container mx-auto py-8 px-4 max-w-7xl">
+                <div className="flex items-center justify-center h-64">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                    <span className="ml-3 text-gray-600">Loading diagrams...</span>
+                </div>
+            </div>
+        );
+    }
 
     // Filter diagrams based on search term
     const filteredDiagrams = useMemo(() => {
-        return diagrams.filter(
-            (diagram) =>
+        return diagrams?.filter(
+            (diagram: Diagram) =>
                 diagram.diagram_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 diagram.diagram_description.toLowerCase().includes(searchTerm.toLowerCase()),
         );
@@ -108,7 +118,7 @@ const ListDiagramPage = () => {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredDiagrams.map((diagram) => (
+                    {filteredDiagrams.map((diagram: Diagram) => (
                         <Card
                             key={diagram.diagram_id}
                             className="hover:shadow-lg transition-shadow duration-200"
@@ -119,7 +129,7 @@ const ListDiagramPage = () => {
                                         {diagram.diagram_name}
                                     </CardTitle>
                                     <div className="flex gap-1 ml-2">
-                                        {diagram.file_urls.length > 0 && (
+                                        {diagram.file_urls?.length > 0 && (
                                             <Badge variant="outline" className="text-xs">
                                                 {diagram.file_urls.length} file
                                                 {diagram.file_urls.length !== 1 ? 's' : ''}
