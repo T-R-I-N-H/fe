@@ -19,7 +19,6 @@ const BpmnModelerComponent = (props: Props) => {
     const modelerRef = useRef<BpmnJS | null>(null);
 
     const { diagram } = useDiagramEditorContext();
-    console.log(diagram);
 
     useEffect(() => {
         if (!containerRef.current) return;
