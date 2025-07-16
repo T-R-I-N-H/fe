@@ -30,6 +30,33 @@ const DiagramServices = {
             throw new Error('Failed to load diagram. Please try again.');
         }
     },
+    async updateDiagram(diagramId: string, diagramData: string): Promise<Diagram> {
+        try {
+            const response = await instance.put(
+                `/diagrams`,
+                {
+                    diagram_id: diagramId,
+                    diagram_data: diagramData,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                },
+            );
+            return response.data.data;
+        } catch (error: any) {
+            console.error('Failed to update diagram:', error);
+            if (error.response?.status === 404) {
+                throw new Error('Diagram not found');
+            } else if (error.response?.status === 403) {
+                throw new Error('You do not have permission to update this diagram');
+            } else if (error.response?.status === 401) {
+                throw new Error('Please log in to update this diagram');
+            }
+            throw new Error('Failed to save diagram. Please try again.');
+        }
+    },
 };
 
 export default DiagramServices;

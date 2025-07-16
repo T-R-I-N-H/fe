@@ -68,6 +68,7 @@ const ListDiagramPage = () => {
     const handleCreateNew = () => {
         console.log('Create new diagram');
         // Navigate to create diagram page
+        navigateWithLoading('/diagrams/new');
     };
 
     const formatDate = (dateString?: string) => {
@@ -155,7 +156,7 @@ const ListDiagramPage = () => {
                                         variant="default"
                                         size="sm"
                                         onClick={() => handleViewDiagram(diagram.diagram_id)}
-                                        className="flex-1"
+                                        className="flex-1 bg-[#007f60] hover:bg-[#006b52] text-white"
                                     >
                                         <Eye className="mr-1 h-3 w-3" />
                                         View
