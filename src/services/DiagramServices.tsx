@@ -57,6 +57,42 @@ const DiagramServices = {
             throw new Error('Failed to save diagram. Please try again.');
         }
     },
+    async optimizeDiagram(diagramId: string): Promise<any> {
+        try {
+            const response = await instance.post(`/diagrams/optimize`, {
+                diagram_id: diagramId,
+            });
+            return response.data;
+        } catch (error: any) {
+            console.error('Failed to optimize diagram:', error);
+            if (error.response?.status === 404) {
+                throw new Error('Diagram not found');
+            } else if (error.response?.status === 403) {
+                throw new Error('You do not have permission to optimize this diagram');
+            } else if (error.response?.status === 401) {
+                throw new Error('Please log in to optimize this diagram');
+            }
+            throw new Error('Failed to optimize diagram. Please try again.');
+        }
+    },
+    async benchmarkDiagram(diagramId: string): Promise<any> {
+        try {
+            const response = await instance.post(`/diagrams/benchmark`, {
+                diagram_id: diagramId,
+            });
+            return response.data;
+        } catch (error: any) {
+            console.error('Failed to benchmark diagram:', error);
+            if (error.response?.status === 404) {
+                throw new Error('Diagram not found');
+            } else if (error.response?.status === 403) {
+                throw new Error('You do not have permission to benchmark this diagram');
+            } else if (error.response?.status === 401) {
+                throw new Error('Please log in to benchmark this diagram');
+            }
+            throw new Error('Failed to benchmark diagram. Please try again.');
+        }
+    },
 };
 
 export default DiagramServices;

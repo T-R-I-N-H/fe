@@ -28,8 +28,14 @@ const ChatServices = {
             throw error;
         }
     },
-    getConversation(diagramId: string): Promise<Conversation> {
-        return instance.get(`/conversation/${diagramId}`);
+    async getConversation(diagramId: string): Promise<Conversation> {
+        try {
+            const response = await instance.get(`/conversation/${diagramId}`);
+            return response.data?.data || response.data;
+        } catch (error) {
+            console.error('Error fetching conversation:', error);
+            throw error;
+        }
     },
 };
 
