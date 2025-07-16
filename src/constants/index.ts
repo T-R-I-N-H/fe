@@ -23,7 +23,7 @@ export const BPMN_CLEANUP_REGEX = {
 // Helper function to clean BPMN XML string
 export const cleanBpmnXml = (xmlString: string): string => {
     return xmlString
-        .replace(BPMN_CLEANUP_REGEX.ESCAPED_NEWLINES, '\n')
+        ?.replace(BPMN_CLEANUP_REGEX.ESCAPED_NEWLINES, '\n')
         .replace(BPMN_CLEANUP_REGEX.ESCAPED_QUOTES, '"')
         .trim();
 };
