@@ -80,7 +80,7 @@ const DiagramServices = {
             const response = await instance.post(`/diagrams/benchmark`, {
                 diagram_id: diagramId,
             });
-            return response.data;
+            return response;
         } catch (error: any) {
             console.error('Failed to benchmark diagram:', error);
             if (error.response?.status === 404) {

@@ -43,6 +43,8 @@ const DiagramDetailPage = () => {
         automationPotential: 'High',
     });
 
+    console.log('Benchmark Data:', benchmarkData);
+
     // Fetch diagram data when component mounts or diagramId changes
     useEffect(() => {
         const fetchDiagram = async () => {
@@ -576,7 +578,7 @@ const DiagramDetailPage = () => {
                                     {benchmarkData && (
                                         <div className="space-y-4 animate-in slide-in-from-bottom-4 duration-500">
                                             {/* Analysis Summary */}
-                                            {benchmarkData.answer && (
+                                            {benchmarkData.message && (
                                                 <Card className="p-4 bg-gradient-to-br from-[#007f60]/10 to-[#005a47]/10 dark:from-[#007f60]/20 dark:to-[#005a47]/20 border-[#007f60]/30 dark:border-[#007f60]/50 shadow-sm hover:shadow-md transition-shadow duration-200">
                                                     <div className="flex items-center gap-2 mb-3">
                                                         <div className="w-6 h-6 bg-gradient-to-br from-[#007f60] to-[#005a47] rounded-full flex items-center justify-center">
@@ -600,117 +602,120 @@ const DiagramDetailPage = () => {
                                                     </div>
                                                     <div className="bg-white/60 dark:bg-slate-800/60 rounded-lg p-3">
                                                         <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
-                                                            {benchmarkData.answer}
+                                                            {benchmarkData.message}
                                                         </p>
+                                                        {benchmarkData.timestamp && (
+                                                            <div className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                                                                <span className="font-medium">
+                                                                    Timestamp:
+                                                                </span>{' '}
+                                                                {new Date(
+                                                                    benchmarkData.timestamp,
+                                                                ).toLocaleString()}
+                                                            </div>
+                                                        )}
+                                                        {benchmarkData.success !== undefined && (
+                                                            <div className="mt-1 text-xs">
+                                                                <span className="font-medium">
+                                                                    Status:
+                                                                </span>{' '}
+                                                                <span
+                                                                    className={
+                                                                        benchmarkData.success
+                                                                            ? 'text-green-600 dark:text-green-400'
+                                                                            : 'text-red-600 dark:text-red-400'
+                                                                    }
+                                                                >
+                                                                    {benchmarkData.success
+                                                                        ? 'Success'
+                                                                        : 'Failed'}
+                                                                </span>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </Card>
                                             )}
 
-                                            {/* Process Metrics Dashboard */}
-                                            <Card className="p-4 bg-gradient-to-br from-slate-50 to-gray-50 dark:from-slate-900/50 dark:to-gray-900/50 border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-shadow duration-200">
-                                                <div className="flex items-center gap-2 mb-3">
-                                                    <div className="w-6 h-6 bg-gradient-to-br from-slate-500 to-gray-500 rounded-full flex items-center justify-center">
-                                                        <svg
-                                                            className="w-3 h-3 text-white"
-                                                            fill="none"
-                                                            stroke="currentColor"
-                                                            viewBox="0 0 24 24"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                strokeWidth={2}
-                                                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                                                            />
-                                                        </svg>
+                                            {/* Benchmark Data */}
+                                            {benchmarkData.data?.benchmark_data && (
+                                                <div className="space-y-3">
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        <div className="w-5 h-5 bg-gradient-to-br from-[#007f60] to-[#005a47] rounded-full flex items-center justify-center">
+                                                            <svg
+                                                                className="w-3 h-3 text-white"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                viewBox="0 0 24 24"
+                                                            >
+                                                                <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    strokeWidth={2}
+                                                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                                                                />
+                                                            </svg>
+                                                        </div>
+                                                        <h4 className="font-semibold text-sm text-slate-800 dark:text-slate-200">
+                                                            Benchmark Metrics
+                                                        </h4>
                                                     </div>
-                                                    <h4 className="font-semibold text-sm text-slate-800 dark:text-slate-200">
-                                                        Performance Metrics
-                                                    </h4>
+
+                                                    {Object.entries(
+                                                        benchmarkData.data.benchmark_data,
+                                                    ).map(([key, value], index) => {
+                                                        const colors = [
+                                                            'from-emerald-50 to-teal-50 border-emerald-200/50 dark:from-emerald-900/20 dark:to-teal-900/20 dark:border-emerald-700/50',
+                                                            'from-blue-50 to-indigo-50 border-blue-200/50 dark:from-blue-900/20 dark:to-indigo-900/20 dark:border-blue-700/50',
+                                                            'from-violet-50 to-purple-50 border-violet-200/50 dark:from-violet-900/20 dark:to-purple-900/20 dark:border-violet-700/50',
+                                                            'from-rose-50 to-pink-50 border-rose-200/50 dark:from-rose-900/20 dark:to-pink-900/20 dark:border-rose-700/50',
+                                                        ];
+                                                        const colorClass =
+                                                            colors[index % colors.length];
+
+                                                        return (
+                                                            <Card
+                                                                key={key}
+                                                                className={`p-3 bg-gradient-to-br ${colorClass} shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]`}
+                                                            >
+                                                                <div className="flex items-start justify-between">
+                                                                    <div className="flex-1">
+                                                                        <h5 className="font-medium text-sm text-slate-800 dark:text-slate-200 mb-1">
+                                                                            {key}
+                                                                        </h5>
+                                                                        <div className="bg-white/60 dark:bg-slate-800/60 rounded p-2">
+                                                                            <p className="text-xs text-slate-600 dark:text-slate-400 break-words leading-relaxed whitespace-pre-wrap">
+                                                                                {typeof value ===
+                                                                                'string'
+                                                                                    ? value
+                                                                                    : JSON.stringify(
+                                                                                          value,
+                                                                                          null,
+                                                                                          2,
+                                                                                      )}
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="w-8 h-8 bg-white/50 dark:bg-slate-800/50 rounded-full flex items-center justify-center ml-2">
+                                                                        <svg
+                                                                            className="w-4 h-4 text-slate-600 dark:text-slate-400"
+                                                                            fill="none"
+                                                                            stroke="currentColor"
+                                                                            viewBox="0 0 24 24"
+                                                                        >
+                                                                            <path
+                                                                                strokeLinecap="round"
+                                                                                strokeLinejoin="round"
+                                                                                strokeWidth={2}
+                                                                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                                                                            />
+                                                                        </svg>
+                                                                    </div>
+                                                                </div>
+                                                            </Card>
+                                                        );
+                                                    })}
                                                 </div>
-
-                                                <div className="grid grid-cols-1 gap-3">
-                                                    {/* Efficiency Metric */}
-                                                    <div className="bg-white/60 dark:bg-slate-800/60 rounded-lg p-3 hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors duration-200">
-                                                        <div className="flex justify-between items-center mb-2">
-                                                            <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
-                                                                Process Efficiency
-                                                            </span>
-                                                            <Badge
-                                                                className={`text-xs ${
-                                                                    processMetrics.efficiency >= 80
-                                                                        ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300'
-                                                                        : processMetrics.efficiency >=
-                                                                            60
-                                                                          ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300'
-                                                                          : 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300'
-                                                                }`}
-                                                            >
-                                                                {processMetrics.efficiency}%
-                                                            </Badge>
-                                                        </div>
-                                                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                                                            <div
-                                                                className={`h-2 rounded-full ${
-                                                                    processMetrics.efficiency >= 80
-                                                                        ? 'bg-gradient-to-r from-green-400 to-green-500'
-                                                                        : processMetrics.efficiency >=
-                                                                            60
-                                                                          ? 'bg-gradient-to-r from-yellow-400 to-yellow-500'
-                                                                          : 'bg-gradient-to-r from-red-400 to-red-500'
-                                                                }`}
-                                                                style={{
-                                                                    width: `${processMetrics.efficiency}%`,
-                                                                }}
-                                                            ></div>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Risk Level */}
-                                                    <div className="bg-white/60 dark:bg-slate-800/60 rounded-lg p-3 hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors duration-200">
-                                                        <div className="flex justify-between items-center">
-                                                            <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
-                                                                Risk Level
-                                                            </span>
-                                                            <Badge
-                                                                className={`text-xs ${
-                                                                    processMetrics.riskScore ===
-                                                                    'Low'
-                                                                        ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300'
-                                                                        : processMetrics.riskScore ===
-                                                                            'Medium'
-                                                                          ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300'
-                                                                          : 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300'
-                                                                }`}
-                                                            >
-                                                                {processMetrics.riskScore}
-                                                            </Badge>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Automation Potential */}
-                                                    <div className="bg-white/60 dark:bg-slate-800/60 rounded-lg p-3 hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors duration-200">
-                                                        <div className="flex justify-between items-center">
-                                                            <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
-                                                                Automation Potential
-                                                            </span>
-                                                            <Badge
-                                                                className={`text-xs ${
-                                                                    processMetrics.automationPotential ===
-                                                                    'High'
-                                                                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'
-                                                                        : processMetrics.automationPotential ===
-                                                                            'Medium'
-                                                                          ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300'
-                                                                          : 'bg-gray-100 text-gray-700 dark:bg-gray-900/50 dark:text-gray-300'
-                                                                }`}
-                                                            >
-                                                                {processMetrics.automationPotential}
-                                                            </Badge>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </Card>
+                                            )}
 
                                             {/* Success Badge */}
                                             <div className="flex justify-center pt-2">
@@ -728,7 +733,7 @@ const DiagramDetailPage = () => {
                                                             d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                                                         />
                                                     </svg>
-                                                    Benchmark Analysis Complete
+                                                    Benchmark Completed Successfully
                                                 </Badge>
                                             </div>
                                         </div>
