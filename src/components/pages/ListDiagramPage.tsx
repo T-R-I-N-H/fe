@@ -14,8 +14,8 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useNavigateWithLoading } from '@/hooks/useNavigateWithLoading';
-import type { Diagram } from '@/types/diagram';
 import DiagramServices from '@/services/DiagramServices';
+import type { Diagram } from '@/types/diagram';
 
 import { Calendar, Download, Edit, Eye, FileText, Plus, Search, Trash2 } from 'lucide-react';
 
@@ -58,17 +58,19 @@ const ListDiagramPage = () => {
     };
 
     const handleDeleteDiagram = async (diagramId: string) => {
-        const confirmDelete = window.confirm('Are you sure you want to delete this diagram? This action cannot be undone.');
-        
+        const confirmDelete = window.confirm(
+            'Are you sure you want to delete this diagram? This action cannot be undone.',
+        );
+
         if (!confirmDelete) return;
 
         try {
             setDeletingId(diagramId);
             await DiagramServices.deleteDiagram(diagramId);
-            
+
             // Refresh the diagrams list
             await refreshDiagrams();
-            
+
             console.log('Diagram deleted successfully');
         } catch (error: any) {
             console.error('Failed to delete diagram:', error);
