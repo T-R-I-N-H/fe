@@ -168,7 +168,7 @@ const NewDiagram = () => {
                                             multiple
                                             onChange={handleFileChange}
                                             className="hidden"
-                                            accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.txt,.json,.xml,.csv"
+                                            accept=".pdf,.docx,.bpmn"
                                         />
                                         <div
                                             onClick={() => fileInputRef.current?.click()}
@@ -182,8 +182,7 @@ const NewDiagram = () => {
                                                 Drop multiple files here or click to browse
                                             </p>
                                             <p className="text-sm text-gray-500 mb-3">
-                                                Support: Images, PDF, Documents, Text files, JSON,
-                                                XML, CSV
+                                                Support: PDF, DOCX, BPMN files only
                                             </p>
                                             <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
                                                 <Plus className="w-3 h-3" />

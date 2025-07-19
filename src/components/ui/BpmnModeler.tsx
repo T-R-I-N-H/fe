@@ -58,6 +58,7 @@ const BpmnModelerComponent = forwardRef<BpmnJS | null, Props>((props, ref) => {
         };
 
         openDiagram(cleanBpmnXml(diagram?.diagram_data));
+        console.log(cleanBpmnXml(diagram?.diagram_data));
 
         return () => {
             modeler.destroy();
