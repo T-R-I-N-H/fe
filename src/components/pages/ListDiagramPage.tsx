@@ -15,12 +15,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { useNavigateWithLoading } from '@/hooks/useNavigateWithLoading';
 import type { Diagram } from '@/types/diagram';
+import DiagramServices from '@/services/DiagramServices';
 
 import { Calendar, Download, Edit, Eye, FileText, Plus, Search, Trash2 } from 'lucide-react';
 
 const ListDiagramPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const { diagrams } = useAppContext();
+    const [deletingId, setDeletingId] = useState<string | null>(null);
+    const { diagrams, refreshDiagrams } = useAppContext();
     const navigateWithLoading = useNavigateWithLoading();
 
     // Show loading spinner while diagrams are being fetched
@@ -55,9 +57,25 @@ const ListDiagramPage = () => {
         // Navigate to diagram edit page
     };
 
-    const handleDeleteDiagram = (diagramId: string) => {
-        console.log('Delete diagram:', diagramId);
-        // Show confirmation dialog and delete
+    const handleDeleteDiagram = async (diagramId: string) => {
+        const confirmDelete = window.confirm('Are you sure you want to delete this diagram? This action cannot be undone.');
+        
+        if (!confirmDelete) return;
+
+        try {
+            setDeletingId(diagramId);
+            await DiagramServices.deleteDiagram(diagramId);
+            
+            // Refresh the diagrams list
+            await refreshDiagrams();
+            
+            console.log('Diagram deleted successfully');
+        } catch (error: any) {
+            console.error('Failed to delete diagram:', error);
+            alert(error.message || 'Failed to delete diagram. Please try again.');
+        } finally {
+            setDeletingId(null);
+        }
     };
 
     const handleDownloadDiagram = (diagramId: string) => {
@@ -143,13 +161,6 @@ const ListDiagramPage = () => {
                                 </CardDescription>
                             </CardHeader>
 
-                            <CardContent className="pt-0">
-                                <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                                    <Calendar className="h-4 w-4" />
-                                    <span>Last modified: {formatDate()}</span>
-                                </div>
-                            </CardContent>
-
                             <CardFooter className="pt-3 border-t">
                                 <div className="flex gap-2 w-full">
                                     <Button
@@ -164,24 +175,15 @@ const ListDiagramPage = () => {
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => handleEditDiagram(diagram.diagram_id)}
-                                    >
-                                        <Edit className="h-3 w-3" />
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => handleDownloadDiagram(diagram.diagram_id)}
-                                    >
-                                        <Download className="h-3 w-3" />
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
                                         onClick={() => handleDeleteDiagram(diagram.diagram_id)}
-                                        className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                                        disabled={deletingId === diagram.diagram_id}
+                                        className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950 disabled:opacity-50"
                                     >
-                                        <Trash2 className="h-3 w-3" />
+                                        {deletingId === diagram.diagram_id ? (
+                                            <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-red-500"></div>
+                                        ) : (
+                                            <Trash2 className="h-3 w-3" />
+                                        )}
                                     </Button>
                                 </div>
                             </CardFooter>

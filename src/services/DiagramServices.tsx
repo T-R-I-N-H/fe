@@ -57,6 +57,21 @@ const DiagramServices = {
             throw new Error('Failed to save diagram. Please try again.');
         }
     },
+    async deleteDiagram(diagramId: string): Promise<void> {
+        try {
+            await instance.delete(`/diagrams?diagram_id=${diagramId}`);
+        } catch (error: any) {
+            console.error('Failed to delete diagram:', error);
+            if (error.response?.status === 404) {
+                throw new Error('Diagram not found');
+            } else if (error.response?.status === 403) {
+                throw new Error('You do not have permission to delete this diagram');
+            } else if (error.response?.status === 401) {
+                throw new Error('Please log in to delete this diagram');
+            }
+            throw new Error('Failed to delete diagram. Please try again.');
+        }
+    },
     async optimizeDiagram(diagramId: string): Promise<any> {
         try {
             const response = await instance.post(`/diagrams/optimize`, {

@@ -15,6 +15,7 @@ interface AppContextType {
     user: User | null;
     setUser: (user: User | null) => void;
     logout: () => void;
+    refreshDiagrams: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -31,25 +32,19 @@ const AppProvider = ({ children }: { children: React.ReactNode }) => {
         window.location.href = '/login';
     };
 
-    useEffect(() => {
-        const fetchDiagrams = async () => {
-            try {
-                const response = await DiagramServices.getDiagrams();
-                setDiagrams(response);
-            } catch (error) {
-                console.error('Failed to fetch diagrams:', error);
-                // If unauthorized, logout user
-                if (
-                    error &&
-                    typeof error === 'object' &&
-                    'status' in error &&
-                    error.status === 401
-                ) {
-                    logout();
-                }
+    const fetchDiagrams = async () => {
+        try {
+            const response = await DiagramServices.getDiagrams();
+            setDiagrams(response);
+        } catch (error) {
+            console.error('Failed to fetch diagrams:', error);
+            // If unauthorized, logout user
+            if (error && typeof error === 'object' && 'status' in error && error.status === 401) {
+                logout();
             }
-        };
-
+        }
+    };
+    useEffect(() => {
         // Only fetch if we have valid tokens
         const googleToken = localStorage.getItem('googleToken');
         const accessToken = localStorage.getItem('accessToken');
@@ -67,6 +62,7 @@ const AppProvider = ({ children }: { children: React.ReactNode }) => {
                 user,
                 setUser,
                 logout,
+                refreshDiagrams: fetchDiagrams, // Expose refresh function
             }}
         >
             {children}
